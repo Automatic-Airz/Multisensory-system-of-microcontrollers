@@ -8,6 +8,7 @@ Adafruit_MLX90614 mlx = Adafruit_MLX90614();
 // 红外火焰传感器 AO-A0 DO-2
 // 烟雾传感器 AO-A3 DO-7
 // 继电器控制引脚 6
+// 蜂鸣器引脚 9
 #define SmokeSensor_AO A3
 #define SmokeSensor_DO 7
 #define FireSensor_AO A0
