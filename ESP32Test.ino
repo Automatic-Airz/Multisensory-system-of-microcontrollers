@@ -21,6 +21,7 @@ BluetoothSerial SerialBT;
 void Bluetooth_Event(esp_spp_cb_event_t event, esp_spp_cb_param_t *param);  
 // 从机HC-05 MAC地址
 uint8_t address[6]={0x98,0xDA,0xC0,0x00,0x32,0x59}; 
+bool ConnectedOrNot;
 
 void setup() {
     // ESP32_MASTER 蓝牙主机初始化 
@@ -28,13 +29,17 @@ void setup() {
     SerialBT.register_callback(Bluetooth_Event); 
     SerialBT.begin("ESP32_MASTER",true); 
     Serial.printf("Init Successful - Master\r\n");
-    SerialBT.connect(address);
+    ConnectedOrNot = SerialBT.connect(address);
+    while(!ConnectedOrNot)
+    {
+      Serial.printf("Fail to connect!");
+      delay(1000);
+      ConnectedOrNot = SerialBT.connect(address);
+    }
     Serial.printf("Connect Successful\r\n");
 
     // 气压数据处理初始化
-    Serial.begin(9600);
     pinMode(Pressure_PIN, INPUT);
-    
 }
 
 void loop()
@@ -48,7 +53,7 @@ void loop()
     // SerialBT.write(Pressure_V);
     SerialBT.write(pressure);
 
-    delay(5000);
+    delay(1000);
 }
 
 void Bluetooth_Event(esp_spp_cb_event_t event, esp_spp_cb_param_t *param)  //蓝牙事件回调函数
