@@ -4,7 +4,7 @@
 // 气压模拟信号采集 相关定义
 // 校准项 标准大气压、满量程输出电压值mV VoltageDetector代码烧进去，打开串口监视器可以看到电压
 //----------------------------------------------------------------
-const float Voltage_100kpa =500; 
+const float Voltage_100kpa =3299.19; 
 const float Voltage_700kpa =3300 ; 
 //----------------------------------------------------------------
 // 电压采集引脚
@@ -21,6 +21,7 @@ BluetoothSerial SerialBT;
 void Bluetooth_Event(esp_spp_cb_event_t event, esp_spp_cb_param_t *param);  
 // 从机HC-05 MAC地址
 uint8_t address[6]={0x98,0xDA,0xC0,0x00,0x32,0x59}; 
+bool ConnectedOrNot;
 
 void setup() {
     // ESP32_MASTER 蓝牙主机初始化 
@@ -28,27 +29,31 @@ void setup() {
     SerialBT.register_callback(Bluetooth_Event); 
     SerialBT.begin("ESP32_MASTER",true); 
     Serial.printf("Init Successful - Master\r\n");
-    SerialBT.connect(address);
+    ConnectedOrNot = SerialBT.connect(address);
+    while(!ConnectedOrNot)
+    {
+      Serial.printf("Fail to connect!");
+      delay(1000);
+      ConnectedOrNot = SerialBT.connect(address);
+    }
     Serial.printf("Connect Successful\r\n");
 
     // 气压数据处理初始化
-    Serial.begin(9600);
     pinMode(Pressure_PIN, INPUT);
-    
 }
 
 void loop()
 {
     // 气压数据线性拟合
     int P_ADC=analogRead(Pressure_PIN);
-    float Pressure_V=P_ADC* VCC / 1024.0;
-    float pressure = map(Pressure_V, Voltage_100kpa, Voltage_700kpa,Pressure_100kpa, Pressure_700kpa);
+    float Pressure_V=P_ADC* VCC / 4096.0;
+    float pressure = map(Pressure_V, Voltage_100kpa, Voltage_700kpa,Pressure_100kpa, Pressure_700kpa)/1000.0;
     
     // 蓝牙数据传输
-    SerialBT.write("Voltage: "+String(Pressure_V) +" V");
-    SerialBT.write("Pressure: "+String(pressure) +" pa");
+    // SerialBT.write(Pressure_V);
+    SerialBT.write(pressure);
 
-    delay(5000);
+    delay(1000);
 }
 
 void Bluetooth_Event(esp_spp_cb_event_t event, esp_spp_cb_param_t *param)  //蓝牙事件回调函数

@@ -10,7 +10,7 @@ void setup() {
 void loop() {
   int ADC;
   ADC=analogRead(Detect_PIN);
-  float Voltage = ADC* VCC / 1024.0;
+  float Voltage = ADC* VCC / 4096;
   Serial.println("The voltage is "+String(Voltage)+"V");
   Serial.println();
 
