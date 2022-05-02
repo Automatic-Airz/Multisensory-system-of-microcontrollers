@@ -45,8 +45,8 @@ void loop()
     float pressure = map(Pressure_V, Voltage_100kpa, Voltage_700kpa,Pressure_100kpa, Pressure_700kpa);
     
     // 蓝牙数据传输
-    SerialBT.write("Voltage: "+String(Pressure_V) +" V");
-    SerialBT.write("Pressure: "+String(pressure) +" pa");
+    // SerialBT.write(Pressure_V);
+    SerialBT.write(pressure);
 
     delay(5000);
 }
