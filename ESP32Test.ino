@@ -4,7 +4,7 @@
 // 气压模拟信号采集 相关定义
 // 校准项 标准大气压、满量程输出电压值mV VoltageDetector代码烧进去，打开串口监视器可以看到电压
 //----------------------------------------------------------------
-const float Voltage_100kpa =500; 
+const float Voltage_100kpa =3299.19; 
 const float Voltage_700kpa =3300 ; 
 //----------------------------------------------------------------
 // 电压采集引脚
@@ -46,8 +46,8 @@ void loop()
 {
     // 气压数据线性拟合
     int P_ADC=analogRead(Pressure_PIN);
-    float Pressure_V=P_ADC* VCC / 1024.0;
-    float pressure = map(Pressure_V, Voltage_100kpa, Voltage_700kpa,Pressure_100kpa, Pressure_700kpa);
+    float Pressure_V=P_ADC* VCC / 4096.0;
+    float pressure = map(Pressure_V, Voltage_100kpa, Voltage_700kpa,Pressure_100kpa, Pressure_700kpa)/1000.0;
     
     // 蓝牙数据传输
     // SerialBT.write(Pressure_V);
